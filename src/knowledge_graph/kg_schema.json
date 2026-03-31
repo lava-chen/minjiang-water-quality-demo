@@ -1,0 +1,51 @@
+{
+  "entity_types": {
+    "Station": {
+      "description": "水质监测站点（岷江水系15个站）",
+      "properties": ["name", "city", "province", "river", "lon", "lat", "order", "is_key", "data_count", "data_period", "latest_do", "main_quality_class", "quality_class_dist"]
+    },
+    "River": {
+      "description": "河流（岷江干流 + 6条支流）",
+      "properties": ["name", "full_name", "level", "description"]
+    },
+    "City": {
+      "description": "所属城市",
+      "properties": ["name", "province"]
+    },
+    "Parameter": {
+      "description": "水质监测参数（9个原始参数）",
+      "properties": ["name", "unit", "description", "category"]
+    },
+    "WaterQualityClass": {
+      "description": "水质类别等级（I~V类）",
+      "properties": ["name", "level", "do_threshold", "description"]
+    },
+    "Event": {
+      "description": "水质事件（如DO低于III类标准）",
+      "properties": ["type", "station", "time", "value", "description"]
+    },
+    "DataSource": {
+      "description": "数据来源",
+      "properties": ["name", "url", "institution"]
+    },
+    "ModelResult": {
+      "description": "LSTM+Attention模型预测结果（7个重点站）",
+      "properties": ["model_type", "station", "rmse", "mae", "r2", "mape", "step_metrics", "top_features", "attention_weights", "hyperparams", "train_period", "val_period", "test_period"]
+    }
+  },
+  "relation_types": {
+    "located_at": {"from": "Station", "to": "River", "description": "站点位于某河流"},
+    "belongs_to": {"from": "Station", "to": "City", "description": "站点属于某城市"},
+    "monitors": {"from": "Station", "to": "Parameter", "description": "站点监测某水质参数"},
+    "classified_as": {"from": "Station", "to": "WaterQualityClass", "description": "站点当前水质类别"},
+    "upstream_of": {"from": "Station", "to": "Station", "description": "同一河流内的上下游关系"},
+    "flows_into": {"from": "Station", "to": "Station", "description": "支流末端站汇入干流站"},
+    "tributary_of": {"from": "River", "to": "River", "description": "支流汇入关系"},
+    "predicted_by": {"from": "Parameter", "to": "ModelResult", "description": "参数被模型预测"},
+    "model_for": {"from": "ModelResult", "to": "Station", "description": "模型对应的站点"},
+    "driven_by": {"from": "ModelResult", "to": "Parameter", "description": "模型结果受某参数驱动"},
+    "occurred_at": {"from": "Event", "to": "Station", "description": "事件发生在某站点"},
+    "affects": {"from": "Event", "to": "Parameter", "description": "事件影响某参数"},
+    "sourced_from": {"from": "Station", "to": "DataSource", "description": "数据来自某数据源"}
+  }
+}

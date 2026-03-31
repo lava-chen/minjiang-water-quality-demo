@@ -1,0 +1,107 @@
+{
+  "station": "姜公堰",
+  "split_info": {
+    "total_rows": 6179,
+    "train_rows": 4325,
+    "val_rows": 926,
+    "test_rows": 928,
+    "train_sequences": 4302,
+    "val_sequences": 921,
+    "test_sequences": 923,
+    "train_period": "2022-01-01 ~ 2024-04-01",
+    "val_period": "2024-04-01 ~ 2024-09-02",
+    "test_period": "2024-09-02 ~ 2025-02-07"
+  },
+  "best_epoch": 16,
+  "total_epochs": 36,
+  "train_time_sec": 172.1,
+  "best_val_loss": 0.155726,
+  "step_metrics": [
+    {
+      "step": 1,
+      "hours_ahead": 4,
+      "MAE": 0.6289,
+      "RMSE": 0.8072,
+      "R2": 0.8534,
+      "MAPE": 6.89
+    },
+    {
+      "step": 2,
+      "hours_ahead": 8,
+      "MAE": 0.6735,
+      "RMSE": 0.8626,
+      "R2": 0.8327,
+      "MAPE": 7.35
+    },
+    {
+      "step": 3,
+      "hours_ahead": 12,
+      "MAE": 0.7225,
+      "RMSE": 0.9231,
+      "R2": 0.8083,
+      "MAPE": 7.81
+    },
+    {
+      "step": 4,
+      "hours_ahead": 16,
+      "MAE": 0.7591,
+      "RMSE": 0.9731,
+      "R2": 0.7868,
+      "MAPE": 8.07
+    },
+    {
+      "step": 5,
+      "hours_ahead": 20,
+      "MAE": 0.7783,
+      "RMSE": 0.9939,
+      "R2": 0.7773,
+      "MAPE": 8.22
+    },
+    {
+      "step": 6,
+      "hours_ahead": 24,
+      "MAE": 0.7483,
+      "RMSE": 0.9598,
+      "R2": 0.7924,
+      "MAPE": 7.97
+    }
+  ],
+  "overall": {
+    "MAE": 0.7184,
+    "RMSE": 0.92,
+    "R2": 0.8085,
+    "MAPE": 7.72
+  },
+  "hyperparams": {
+    "lookback": 18,
+    "forecast": 6,
+    "hidden_size": 96,
+    "num_layers": 2,
+    "dropout": 0.2,
+    "lr": 0.001,
+    "weight_decay": 1e-05,
+    "patience": 20,
+    "loss_function": "SmoothL1Loss",
+    "input_features": [
+      "水温",
+      "pH",
+      "溶解氧",
+      "电导率",
+      "浊度",
+      "高锰酸盐指数",
+      "氨氮",
+      "总磷",
+      "总氮",
+      "hour_sin",
+      "hour_cos",
+      "dayofyear_sin",
+      "dayofyear_cos",
+      "DO_24h_mean",
+      "DO_24h_std",
+      "DO_diff",
+      "DO_72h_mean",
+      "temp_24h_mean",
+      "temp_diff"
+    ]
+  }
+}

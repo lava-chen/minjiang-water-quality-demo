@@ -1,0 +1,2935 @@
+{
+  "metadata": {
+    "project": "岷江水系水质预测系统",
+    "total_stations": 15,
+    "key_stations": 7,
+    "rivers": [
+      "岷江干流",
+      "大渡河",
+      "青衣江",
+      "府河",
+      "江安河",
+      "马边河",
+      "越溪河"
+    ],
+    "data_source": "国家地表水水质自动监测实时数据发布系统",
+    "model": "LSTM+Attention",
+    "target": "溶解氧(DO)",
+    "forecast_horizon": "4h / 8h / 12h / 16h / 20h / 24h"
+  },
+  "nodes": [
+    {
+      "id": "DS_国家地表水",
+      "type": "DataSource",
+      "name": "国家地表水水质自动监测实时数据发布系统",
+      "url": "https://szzdjc.cnemc.cn:8070/GJZ/Business/Publish/Main.html",
+      "institution": "中国环境监测总站"
+    },
+    {
+      "id": "R_岷江干流",
+      "type": "River",
+      "name": "岷江干流",
+      "full_name": "岷江干流",
+      "level": "干流",
+      "description": "岷江主河道，发源于松潘，汇入长江"
+    },
+    {
+      "id": "R_大渡河",
+      "type": "River",
+      "name": "大渡河",
+      "full_name": "大渡河",
+      "level": "一级支流",
+      "description": "岷江最大支流，在乐山汇入岷江"
+    },
+    {
+      "id": "R_青衣江",
+      "type": "River",
+      "name": "青衣江",
+      "full_name": "青衣江",
+      "level": "一级支流",
+      "description": "岷江支流，在乐山汇入岷江"
+    },
+    {
+      "id": "R_府河",
+      "type": "River",
+      "name": "府河",
+      "full_name": "府河",
+      "level": "二级支流",
+      "description": "成都市区主要河流，在岳店子下游汇入岷江"
+    },
+    {
+      "id": "R_江安河",
+      "type": "River",
+      "name": "江安河",
+      "full_name": "江安河",
+      "level": "二级支流",
+      "description": "成都市区河流，在岳店子下游汇入岷江"
+    },
+    {
+      "id": "R_马边河",
+      "type": "River",
+      "name": "马边河",
+      "full_name": "马边河",
+      "level": "一级支流",
+      "description": "岷江支流，在悦来渡口附近汇入岷江"
+    },
+    {
+      "id": "R_越溪河",
+      "type": "River",
+      "name": "越溪河",
+      "full_name": "越溪河",
+      "level": "一级支流",
+      "description": "岷江支流，在月波附近汇入岷江"
+    },
+    {
+      "id": "C_阿坝藏族羌族自治州",
+      "type": "City",
+      "name": "阿坝藏族羌族自治州",
+      "province": "四川省"
+    },
+    {
+      "id": "C_自贡市",
+      "type": "City",
+      "name": "自贡市",
+      "province": "四川省"
+    },
+    {
+      "id": "C_宜宾市",
+      "type": "City",
+      "name": "宜宾市",
+      "province": "四川省"
+    },
+    {
+      "id": "C_成都市",
+      "type": "City",
+      "name": "成都市",
+      "province": "四川省"
+    },
+    {
+      "id": "C_乐山市",
+      "type": "City",
+      "name": "乐山市",
+      "province": "四川省"
+    },
+    {
+      "id": "C_雅安市",
+      "type": "City",
+      "name": "雅安市",
+      "province": "四川省"
+    },
+    {
+      "id": "P_溶解氧",
+      "type": "Parameter",
+      "name": "溶解氧",
+      "unit": "mg/L",
+      "category": "物理化学",
+      "description": "水中溶解氧含量，反映水体自净能力"
+    },
+    {
+      "id": "P_水温",
+      "type": "Parameter",
+      "name": "水温",
+      "unit": "°C",
+      "category": "物理",
+      "description": "水体温度，影响溶氧和生化过程"
+    },
+    {
+      "id": "P_pH",
+      "type": "Parameter",
+      "name": "pH",
+      "unit": "无量纲",
+      "category": "化学",
+      "description": "酸碱度，影响水生生物生存"
+    },
+    {
+      "id": "P_电导率",
+      "type": "Parameter",
+      "name": "电导率",
+      "unit": "uS/cm",
+      "category": "物理",
+      "description": "水体导电能力，反映离子浓度"
+    },
+    {
+      "id": "P_浊度",
+      "type": "Parameter",
+      "name": "浊度",
+      "unit": "NTU",
+      "category": "物理",
+      "description": "水体透明度，反映悬浮物含量"
+    },
+    {
+      "id": "P_高锰酸盐指数",
+      "type": "Parameter",
+      "name": "高锰酸盐指数",
+      "unit": "mg/L",
+      "category": "化学",
+      "description": "有机污染综合指标"
+    },
+    {
+      "id": "P_氨氮",
+      "type": "Parameter",
+      "name": "氨氮",
+      "unit": "mg/L",
+      "category": "化学",
+      "description": "含氮有机物分解产物，水体富营养化指标"
+    },
+    {
+      "id": "P_总磷",
+      "type": "Parameter",
+      "name": "总磷",
+      "unit": "mg/L",
+      "category": "化学",
+      "description": "水体富营养化关键控制因子"
+    },
+    {
+      "id": "P_总氮",
+      "type": "Parameter",
+      "name": "总氮",
+      "unit": "mg/L",
+      "category": "化学",
+      "description": "氮素总量，富营养化指标"
+    },
+    {
+      "id": "WQ_I",
+      "type": "WaterQualityClass",
+      "name": "I",
+      "level": 1,
+      "do_threshold": 7.5,
+      "description": "适用于源头水、国家自然保护区"
+    },
+    {
+      "id": "WQ_II",
+      "type": "WaterQualityClass",
+      "name": "II",
+      "level": 2,
+      "do_threshold": 6.0,
+      "description": "适用于集中式饮用水源地一级保护区等"
+    },
+    {
+      "id": "WQ_III",
+      "type": "WaterQualityClass",
+      "name": "III",
+      "level": 3,
+      "do_threshold": 5.0,
+      "description": "适用于集中式饮用水源地二级保护区等"
+    },
+    {
+      "id": "WQ_IV",
+      "type": "WaterQualityClass",
+      "name": "IV",
+      "level": 4,
+      "do_threshold": 3.0,
+      "description": "适用于一般工业用水及人体非直接接触的娱乐用水"
+    },
+    {
+      "id": "WQ_V",
+      "type": "WaterQualityClass",
+      "name": "V",
+      "level": 5,
+      "do_threshold": 2.0,
+      "description": "适用于农业用水及一般景观用水"
+    },
+    {
+      "id": "S_渭门桥",
+      "type": "Station",
+      "name": "渭门桥",
+      "city": "阿坝藏族羌族自治州",
+      "province": "四川省",
+      "river": "岷江干流",
+      "lon": 103.885342,
+      "lat": 30.217462,
+      "order": 1,
+      "is_key": true,
+      "data_count": 5783,
+      "data_period": "2022-01-01 ~ 2025-02-07",
+      "latest_do": 11.23,
+      "main_quality_class": "I",
+      "quality_class_dist": {
+        "I": 0.8293,
+        "II": 0.1658,
+        "III": 0.0036,
+        "V": 0.0007,
+        "IV": 0.0005
+      }
+    },
+    {
+      "id": "S_都江堰水文站",
+      "type": "Station",
+      "name": "都江堰水文站",
+      "city": "成都市",
+      "province": "四川省",
+      "river": "岷江干流",
+      "lon": 103.593384,
+      "lat": 31.025919,
+      "order": 2,
+      "is_key": true,
+      "data_count": 6070,
+      "data_period": "2022-01-01 ~ 2025-02-07",
+      "latest_do": 9.87,
+      "main_quality_class": "I",
+      "quality_class_dist": {
+        "I": 0.8784,
+        "II": 0.1105,
+        "III": 0.0068,
+        "IV": 0.0025,
+        "V": 0.0018
+      }
+    },
+    {
+      "id": "S_岳店子下",
+      "type": "Station",
+      "name": "岳店子下",
+      "city": "成都市",
+      "province": "四川省",
+      "river": "岷江干流",
+      "lon": 103.869644,
+      "lat": 30.381788,
+      "order": 3,
+      "is_key": true,
+      "data_count": 5996,
+      "data_period": "2022-01-01 ~ 2025-02-07",
+      "latest_do": 12.19,
+      "main_quality_class": "III",
+      "quality_class_dist": {
+        "III": 0.709,
+        "II": 0.227,
+        "IV": 0.054,
+        "V": 0.0082,
+        "I": 0.0018
+      }
+    },
+    {
+      "id": "S_悦来渡口",
+      "type": "Station",
+      "name": "悦来渡口",
+      "city": "乐山市",
+      "province": "四川省",
+      "river": "岷江干流",
+      "lon": 107.21441,
+      "lat": 31.236052,
+      "order": 4,
+      "is_key": true,
+      "data_count": 6051,
+      "data_period": "2022-01-01 ~ 2025-02-07",
+      "latest_do": 9.96,
+      "main_quality_class": "II",
+      "quality_class_dist": {
+        "II": 0.7908,
+        "III": 0.1945,
+        "IV": 0.0102,
+        "V": 0.0025,
+        "I": 0.002
+      }
+    },
+    {
+      "id": "S_月波",
+      "type": "Station",
+      "name": "月波",
+      "city": "宜宾市",
+      "province": "四川省",
+      "river": "岷江干流",
+      "lon": 104.164944,
+      "lat": 29.040938,
+      "order": 5,
+      "is_key": true,
+      "data_count": 6169,
+      "data_period": "2022-01-01 ~ 2025-02-07",
+      "latest_do": 9.79,
+      "main_quality_class": "II",
+      "quality_class_dist": {
+        "II": 0.5991,
+        "III": 0.3876,
+        "IV": 0.0088,
+        "V": 0.0028,
+        "I": 0.0018
+      }
+    },
+    {
+      "id": "S_李码头",
+      "type": "Station",
+      "name": "李码头",
+      "city": "乐山市",
+      "province": "四川省",
+      "river": "大渡河",
+      "lon": 103.755595,
+      "lat": 29.556038,
+      "order": 3,
+      "is_key": true,
+      "data_count": 6017,
+      "data_period": "2022-01-01 ~ 2025-02-07",
+      "latest_do": 11.0,
+      "main_quality_class": "II",
+      "quality_class_dist": {
+        "II": 0.8767,
+        "I": 0.0921,
+        "III": 0.0221,
+        "IV": 0.0065,
+        "V": 0.0027
+      }
+    },
+    {
+      "id": "S_姜公堰",
+      "type": "Station",
+      "name": "姜公堰",
+      "city": "乐山市",
+      "province": "四川省",
+      "river": "青衣江",
+      "lon": 104.075931,
+      "lat": 30.651651,
+      "order": 3,
+      "is_key": true,
+      "data_count": 6179,
+      "data_period": "2022-01-01 ~ 2025-02-07",
+      "latest_do": 10.87,
+      "main_quality_class": "II",
+      "quality_class_dist": {
+        "II": 0.5464,
+        "I": 0.3706,
+        "III": 0.0571,
+        "IV": 0.0214,
+        "V": 0.0045
+      }
+    },
+    {
+      "id": "S_大岗山",
+      "type": "Station",
+      "name": "大岗山",
+      "city": "雅安市",
+      "province": "四川省",
+      "river": "大渡河",
+      "lon": 102.76319,
+      "lat": 30.107342,
+      "order": 1,
+      "is_key": false,
+      "data_count": 5944,
+      "data_period": "2022-01-01 ~ 2025-02-07",
+      "latest_do": 10.18,
+      "main_quality_class": "I",
+      "quality_class_dist": {
+        "I": 0.7572,
+        "II": 0.2365,
+        "III": 0.0049,
+        "V": 0.0008,
+        "IV": 0.0005
+      }
+    },
+    {
+      "id": "S_三谷庄",
+      "type": "Station",
+      "name": "三谷庄",
+      "city": "雅安市",
+      "province": "四川省",
+      "river": "大渡河",
+      "lon": 102.824629,
+      "lat": 29.248483,
+      "order": 2,
+      "is_key": false,
+      "data_count": 6159,
+      "data_period": "2022-01-01 ~ 2025-02-07",
+      "latest_do": 9.68,
+      "main_quality_class": "I",
+      "quality_class_dist": {
+        "I": 0.7944,
+        "II": 0.203,
+        "III": 0.0015,
+        "IV": 0.0008,
+        "V": 0.0003
+      }
+    },
+    {
+      "id": "S_木城镇",
+      "type": "Station",
+      "name": "木城镇",
+      "city": "乐山市",
+      "province": "四川省",
+      "river": "青衣江",
+      "lon": 103.489224,
+      "lat": 29.796617,
+      "order": 1,
+      "is_key": false,
+      "data_count": 6130,
+      "data_period": "2022-01-01 ~ 2025-02-07",
+      "latest_do": 10.68,
+      "main_quality_class": "II",
+      "quality_class_dist": {
+        "II": 0.9121,
+        "I": 0.0653,
+        "III": 0.0135,
+        "IV": 0.0073,
+        "V": 0.0018
+      }
+    },
+    {
+      "id": "S_龟都府",
+      "type": "Station",
+      "name": "龟都府",
+      "city": "雅安市",
+      "province": "四川省",
+      "river": "青衣江",
+      "lon": 103.153212,
+      "lat": 29.926985,
+      "order": 2,
+      "is_key": false,
+      "data_count": 5820,
+      "data_period": "2022-01-01 ~ 2025-02-07",
+      "latest_do": 10.47,
+      "main_quality_class": "II",
+      "quality_class_dist": {
+        "II": 0.9244,
+        "III": 0.0495,
+        "IV": 0.0131,
+        "I": 0.007,
+        "V": 0.006
+      }
+    },
+    {
+      "id": "S_黄龙溪",
+      "type": "Station",
+      "name": "黄龙溪",
+      "city": "成都市",
+      "province": "四川省",
+      "river": "府河",
+      "lon": 103.970525,
+      "lat": 30.317805,
+      "order": 1,
+      "is_key": false,
+      "data_count": 5878,
+      "data_period": "2022-01-01 ~ 2025-02-07",
+      "latest_do": 10.93,
+      "main_quality_class": "II",
+      "quality_class_dist": {
+        "II": 0.7218,
+        "III": 0.2281,
+        "IV": 0.033,
+        "V": 0.0085,
+        "I": 0.0085
+      }
+    },
+    {
+      "id": "S_二江寺",
+      "type": "Station",
+      "name": "二江寺",
+      "city": "成都市",
+      "province": "四川省",
+      "river": "江安河",
+      "lon": 104.035727,
+      "lat": 30.499615,
+      "order": 1,
+      "is_key": false,
+      "data_count": 6192,
+      "data_period": "2022-01-01 ~ 2025-02-07",
+      "latest_do": 10.92,
+      "main_quality_class": "II",
+      "quality_class_dist": {
+        "II": 0.5846,
+        "III": 0.3684,
+        "IV": 0.0397,
+        "V": 0.0058,
+        "I": 0.0015
+      }
+    },
+    {
+      "id": "S_马边河河口",
+      "type": "Station",
+      "name": "马边河河口",
+      "city": "乐山市",
+      "province": "四川省",
+      "river": "马边河",
+      "lon": 103.958521,
+      "lat": 29.15477,
+      "order": 1,
+      "is_key": false,
+      "data_count": 6149,
+      "data_period": "2022-01-01 ~ 2025-02-07",
+      "latest_do": 8.32,
+      "main_quality_class": "II",
+      "quality_class_dist": {
+        "II": 0.8962,
+        "III": 0.0906,
+        "IV": 0.008,
+        "I": 0.0042,
+        "V": 0.001
+      }
+    },
+    {
+      "id": "S_越溪河两河口",
+      "type": "Station",
+      "name": "越溪河两河口",
+      "city": "自贡市",
+      "province": "四川省",
+      "river": "越溪河",
+      "lon": 101.077814,
+      "lat": 30.057141,
+      "order": 1,
+      "is_key": false,
+      "data_count": 6177,
+      "data_period": "2022-01-01 ~ 2025-02-07",
+      "latest_do": 9.1,
+      "main_quality_class": "II",
+      "quality_class_dist": {
+        "II": 0.4779,
+        "III": 0.2859,
+        "IV": 0.1896,
+        "V": 0.0361,
+        "I": 0.0105
+      }
+    },
+    {
+      "id": "MR_渭门桥",
+      "type": "ModelResult",
+      "model_type": "LSTM+Attention",
+      "station": "渭门桥",
+      "rmse": 0.2293,
+      "mae": 0.1713,
+      "r2": 0.9494,
+      "mape": 1.77,
+      "step_metrics": [
+        {
+          "step": 1,
+          "hours_ahead": 4,
+          "MAE": 0.1555,
+          "RMSE": 0.2116,
+          "R2": 0.9571,
+          "MAPE": 1.61
+        },
+        {
+          "step": 2,
+          "hours_ahead": 8,
+          "MAE": 0.1679,
+          "RMSE": 0.2228,
+          "R2": 0.9524,
+          "MAPE": 1.73
+        },
+        {
+          "step": 3,
+          "hours_ahead": 12,
+          "MAE": 0.1707,
+          "RMSE": 0.2286,
+          "R2": 0.9498,
+          "MAPE": 1.77
+        },
+        {
+          "step": 4,
+          "hours_ahead": 16,
+          "MAE": 0.1772,
+          "RMSE": 0.238,
+          "R2": 0.9455,
+          "MAPE": 1.84
+        },
+        {
+          "step": 5,
+          "hours_ahead": 20,
+          "MAE": 0.1763,
+          "RMSE": 0.2373,
+          "R2": 0.9457,
+          "MAPE": 1.83
+        },
+        {
+          "step": 6,
+          "hours_ahead": 24,
+          "MAE": 0.1801,
+          "RMSE": 0.2372,
+          "R2": 0.9457,
+          "MAPE": 1.85
+        }
+      ],
+      "top_features": [
+        {
+          "name": "DO_diff",
+          "importance": 0.5469,
+          "explanation": "当前DO与上一个时间步的差值，捕捉DO的瞬时变化趋势（上升/下降）。"
+        },
+        {
+          "name": "电导率",
+          "importance": 0.1766,
+          "explanation": "反映水体总离子浓度，间接指示排污或地质背景变化，与DO存在协变关系。"
+        },
+        {
+          "name": "DO_24h_mean",
+          "importance": 0.1335,
+          "explanation": "过去24小时DO平均值，反映近期DO整体水平，帮助模型识别稳态趋势。"
+        },
+        {
+          "name": "temp_diff",
+          "importance": 0.1219,
+          "explanation": "当前水温与上一个时间步的差值，捕捉温度的急剧变化对DO的冲击。"
+        },
+        {
+          "name": "水温",
+          "importance": -0.0708,
+          "explanation": "水温升高导致溶解氧饱和浓度下降，是DO最直接的物理驱动因素。夏季高温期常出现DO低谷。"
+        }
+      ],
+      "attention_weights": {
+        "t-18(72h前)": 0.0089,
+        "t-17(68h前)": 0.0091,
+        "t-16(64h前)": 0.0095,
+        "t-15(60h前)": 0.0101,
+        "t-14(56h前)": 0.0111,
+        "t-13(52h前)": 0.0127,
+        "t-12(48h前)": 0.0151,
+        "t-11(44h前)": 0.0187,
+        "t-10(40h前)": 0.024,
+        "t-9(36h前)": 0.032,
+        "t-8(32h前)": 0.0433,
+        "t-7(28h前)": 0.0584,
+        "t-6(24h前)": 0.0766,
+        "t-5(20h前)": 0.0962,
+        "t-4(16h前)": 0.1157,
+        "t-3(12h前)": 0.1345,
+        "t-2(8h前)": 0.1529,
+        "t-1(4h前)": 0.1713
+      },
+      "best_epoch": 7,
+      "total_epochs": 27,
+      "train_time_sec": 32.1,
+      "train_period": "2022-01-01 ~ 2024-04-03",
+      "val_period": "2024-04-04 ~ 2024-09-10",
+      "test_period": "2024-09-10 ~ 2025-02-07",
+      "hyperparams": {
+        "lookback": 18,
+        "forecast": 6,
+        "hidden_size": 96,
+        "num_layers": 2,
+        "dropout": 0.2,
+        "lr": 0.001,
+        "weight_decay": 1e-05,
+        "patience": 20,
+        "loss_function": "SmoothL1Loss",
+        "input_features": [
+          "水温",
+          "pH",
+          "溶解氧",
+          "电导率",
+          "浊度",
+          "高锰酸盐指数",
+          "氨氮",
+          "总磷",
+          "总氮",
+          "hour_sin",
+          "hour_cos",
+          "dayofyear_sin",
+          "dayofyear_cos",
+          "DO_24h_mean",
+          "DO_24h_std",
+          "DO_diff",
+          "DO_72h_mean",
+          "temp_24h_mean",
+          "temp_diff"
+        ]
+      }
+    },
+    {
+      "id": "MR_都江堰水文站",
+      "type": "ModelResult",
+      "model_type": "LSTM+Attention",
+      "station": "都江堰水文站",
+      "rmse": 0.596,
+      "mae": 0.2732,
+      "r2": 0.5359,
+      "mape": 3.06,
+      "step_metrics": [
+        {
+          "step": 1,
+          "hours_ahead": 4,
+          "MAE": 0.2684,
+          "RMSE": 0.6038,
+          "R2": 0.5311,
+          "MAPE": 3.01
+        },
+        {
+          "step": 2,
+          "hours_ahead": 8,
+          "MAE": 0.2776,
+          "RMSE": 0.6088,
+          "R2": 0.5196,
+          "MAPE": 3.11
+        },
+        {
+          "step": 3,
+          "hours_ahead": 12,
+          "MAE": 0.2719,
+          "RMSE": 0.6001,
+          "R2": 0.5295,
+          "MAPE": 3.03
+        },
+        {
+          "step": 4,
+          "hours_ahead": 16,
+          "MAE": 0.2732,
+          "RMSE": 0.5949,
+          "R2": 0.5377,
+          "MAPE": 3.05
+        },
+        {
+          "step": 5,
+          "hours_ahead": 20,
+          "MAE": 0.275,
+          "RMSE": 0.5889,
+          "R2": 0.5456,
+          "MAPE": 3.07
+        },
+        {
+          "step": 6,
+          "hours_ahead": 24,
+          "MAE": 0.2734,
+          "RMSE": 0.5797,
+          "R2": 0.5516,
+          "MAPE": 3.07
+        }
+      ],
+      "top_features": [
+        {
+          "name": "溶解氧",
+          "importance": 0.3289,
+          "explanation": "DO自身具有强时序自相关性，历史DO值是预测未来趋势的重要基准。"
+        },
+        {
+          "name": "DO_24h_std",
+          "importance": 0.2802,
+          "explanation": "过去24小时DO标准差，衡量近期DO波动幅度，高波动通常预示水质变化。"
+        },
+        {
+          "name": "DO_diff",
+          "importance": 0.1729,
+          "explanation": "当前DO与上一个时间步的差值，捕捉DO的瞬时变化趋势（上升/下降）。"
+        },
+        {
+          "name": "DO_24h_mean",
+          "importance": 0.0581,
+          "explanation": "过去24小时DO平均值，反映近期DO整体水平，帮助模型识别稳态趋势。"
+        },
+        {
+          "name": "高锰酸盐指数",
+          "importance": 0.0558,
+          "explanation": "反映水体有机污染程度，有机物好氧分解直接消耗溶解氧。"
+        }
+      ],
+      "attention_weights": {
+        "t-18(72h前)": 0.0104,
+        "t-17(68h前)": 0.0117,
+        "t-16(64h前)": 0.014,
+        "t-15(60h前)": 0.0175,
+        "t-14(56h前)": 0.0224,
+        "t-13(52h前)": 0.0283,
+        "t-12(48h前)": 0.0346,
+        "t-11(44h前)": 0.0409,
+        "t-10(40h前)": 0.0471,
+        "t-9(36h前)": 0.0535,
+        "t-8(32h前)": 0.0602,
+        "t-7(28h前)": 0.0672,
+        "t-6(24h前)": 0.0748,
+        "t-5(20h前)": 0.083,
+        "t-4(16h前)": 0.0922,
+        "t-3(12h前)": 0.1023,
+        "t-2(8h前)": 0.1137,
+        "t-1(4h前)": 0.1261
+      },
+      "best_epoch": 8,
+      "total_epochs": 28,
+      "train_time_sec": 37.0,
+      "train_period": "2022-01-01 ~ 2024-03-18",
+      "val_period": "2024-03-19 ~ 2024-08-23",
+      "test_period": "2024-08-23 ~ 2025-02-07",
+      "hyperparams": {
+        "lookback": 18,
+        "forecast": 6,
+        "hidden_size": 96,
+        "num_layers": 2,
+        "dropout": 0.2,
+        "lr": 0.001,
+        "weight_decay": 1e-05,
+        "patience": 20,
+        "loss_function": "SmoothL1Loss",
+        "input_features": [
+          "水温",
+          "pH",
+          "溶解氧",
+          "电导率",
+          "浊度",
+          "高锰酸盐指数",
+          "氨氮",
+          "总磷",
+          "总氮",
+          "hour_sin",
+          "hour_cos",
+          "dayofyear_sin",
+          "dayofyear_cos",
+          "DO_24h_mean",
+          "DO_24h_std",
+          "DO_diff",
+          "DO_72h_mean",
+          "temp_24h_mean",
+          "temp_diff"
+        ]
+      }
+    },
+    {
+      "id": "MR_岳店子下",
+      "type": "ModelResult",
+      "model_type": "LSTM+Attention",
+      "station": "岳店子下",
+      "rmse": 0.8946,
+      "mae": 0.638,
+      "r2": 0.7372,
+      "mape": 6.42,
+      "step_metrics": [
+        {
+          "step": 1,
+          "hours_ahead": 4,
+          "MAE": 0.6184,
+          "RMSE": 0.8689,
+          "R2": 0.7526,
+          "MAPE": 6.24
+        },
+        {
+          "step": 2,
+          "hours_ahead": 8,
+          "MAE": 0.6231,
+          "RMSE": 0.8795,
+          "R2": 0.746,
+          "MAPE": 6.27
+        },
+        {
+          "step": 3,
+          "hours_ahead": 12,
+          "MAE": 0.6337,
+          "RMSE": 0.8954,
+          "R2": 0.7366,
+          "MAPE": 6.39
+        },
+        {
+          "step": 4,
+          "hours_ahead": 16,
+          "MAE": 0.6429,
+          "RMSE": 0.9024,
+          "R2": 0.7325,
+          "MAPE": 6.48
+        },
+        {
+          "step": 5,
+          "hours_ahead": 20,
+          "MAE": 0.6437,
+          "RMSE": 0.897,
+          "R2": 0.7358,
+          "MAPE": 6.44
+        },
+        {
+          "step": 6,
+          "hours_ahead": 24,
+          "MAE": 0.6659,
+          "RMSE": 0.9243,
+          "R2": 0.7197,
+          "MAPE": 6.68
+        }
+      ],
+      "top_features": [
+        {
+          "name": "hour_cos",
+          "importance": 0.5296,
+          "explanation": "一天内的时间周期（余弦分量），与hour_sin配合编码24小时周期变化。"
+        },
+        {
+          "name": "hour_sin",
+          "importance": 0.4503,
+          "explanation": "一天内的时间周期（正弦分量），捕捉DO的昼夜节律——白天光合产氧，夜间呼吸耗氧。"
+        },
+        {
+          "name": "DO_24h_std",
+          "importance": -0.026,
+          "explanation": "过去24小时DO标准差，衡量近期DO波动幅度，高波动通常预示水质变化。"
+        },
+        {
+          "name": "氨氮",
+          "importance": 0.0193,
+          "explanation": "氨氮硝化过程消耗大量溶解氧，是耗氧型污染的重要指示。"
+        },
+        {
+          "name": "DO_diff",
+          "importance": 0.0148,
+          "explanation": "当前DO与上一个时间步的差值，捕捉DO的瞬时变化趋势（上升/下降）。"
+        }
+      ],
+      "attention_weights": {
+        "t-18(72h前)": 0.0254,
+        "t-17(68h前)": 0.028,
+        "t-16(64h前)": 0.0292,
+        "t-15(60h前)": 0.0299,
+        "t-14(56h前)": 0.0313,
+        "t-13(52h前)": 0.0334,
+        "t-12(48h前)": 0.0353,
+        "t-11(44h前)": 0.0379,
+        "t-10(40h前)": 0.0423,
+        "t-9(36h前)": 0.0486,
+        "t-8(32h前)": 0.0568,
+        "t-7(28h前)": 0.0652,
+        "t-6(24h前)": 0.0717,
+        "t-5(20h前)": 0.0767,
+        "t-4(16h前)": 0.0825,
+        "t-3(12h前)": 0.0912,
+        "t-2(8h前)": 0.1023,
+        "t-1(4h前)": 0.1122
+      },
+      "best_epoch": 18,
+      "total_epochs": 38,
+      "train_time_sec": 68.0,
+      "train_period": "2022-01-01 ~ 2024-04-10",
+      "val_period": "2024-04-10 ~ 2024-09-07",
+      "test_period": "2024-09-07 ~ 2025-02-07",
+      "hyperparams": {
+        "lookback": 18,
+        "forecast": 6,
+        "hidden_size": 96,
+        "num_layers": 2,
+        "dropout": 0.2,
+        "lr": 0.001,
+        "weight_decay": 1e-05,
+        "patience": 20,
+        "loss_function": "SmoothL1Loss",
+        "input_features": [
+          "水温",
+          "pH",
+          "溶解氧",
+          "电导率",
+          "浊度",
+          "高锰酸盐指数",
+          "氨氮",
+          "总磷",
+          "总氮",
+          "hour_sin",
+          "hour_cos",
+          "dayofyear_sin",
+          "dayofyear_cos",
+          "DO_24h_mean",
+          "DO_24h_std",
+          "DO_diff",
+          "DO_72h_mean",
+          "temp_24h_mean",
+          "temp_diff"
+        ]
+      }
+    },
+    {
+      "id": "MR_悦来渡口",
+      "type": "ModelResult",
+      "model_type": "LSTM+Attention",
+      "station": "悦来渡口",
+      "rmse": 0.4115,
+      "mae": 0.2877,
+      "r2": 0.7667,
+      "mape": 3.14,
+      "step_metrics": [
+        {
+          "step": 1,
+          "hours_ahead": 4,
+          "MAE": 0.2592,
+          "RMSE": 0.3781,
+          "R2": 0.8048,
+          "MAPE": 2.82
+        },
+        {
+          "step": 2,
+          "hours_ahead": 8,
+          "MAE": 0.2792,
+          "RMSE": 0.4008,
+          "R2": 0.78,
+          "MAPE": 3.04
+        },
+        {
+          "step": 3,
+          "hours_ahead": 12,
+          "MAE": 0.2895,
+          "RMSE": 0.4143,
+          "R2": 0.7645,
+          "MAPE": 3.16
+        },
+        {
+          "step": 4,
+          "hours_ahead": 16,
+          "MAE": 0.299,
+          "RMSE": 0.4244,
+          "R2": 0.7522,
+          "MAPE": 3.27
+        },
+        {
+          "step": 5,
+          "hours_ahead": 20,
+          "MAE": 0.2972,
+          "RMSE": 0.4231,
+          "R2": 0.7529,
+          "MAPE": 3.26
+        },
+        {
+          "step": 6,
+          "hours_ahead": 24,
+          "MAE": 0.3022,
+          "RMSE": 0.4282,
+          "R2": 0.7461,
+          "MAPE": 3.32
+        }
+      ],
+      "top_features": [
+        {
+          "name": "浊度",
+          "importance": 0.3337,
+          "explanation": "高浊度减弱光照穿透，抑制藻类光合产氧，同时悬浮有机物分解消耗DO。"
+        },
+        {
+          "name": "temp_diff",
+          "importance": 0.196,
+          "explanation": "当前水温与上一个时间步的差值，捕捉温度的急剧变化对DO的冲击。"
+        },
+        {
+          "name": "DO_diff",
+          "importance": 0.1959,
+          "explanation": "当前DO与上一个时间步的差值，捕捉DO的瞬时变化趋势（上升/下降）。"
+        },
+        {
+          "name": "氨氮",
+          "importance": 0.1327,
+          "explanation": "氨氮硝化过程消耗大量溶解氧，是耗氧型污染的重要指示。"
+        },
+        {
+          "name": "总氮",
+          "importance": 0.1326,
+          "explanation": "氮素过量加剧富营养化，间接通过生物过程影响DO浓度。"
+        }
+      ],
+      "attention_weights": {
+        "t-18(72h前)": 0.0282,
+        "t-17(68h前)": 0.0299,
+        "t-16(64h前)": 0.032,
+        "t-15(60h前)": 0.0344,
+        "t-14(56h前)": 0.0371,
+        "t-13(52h前)": 0.0402,
+        "t-12(48h前)": 0.0436,
+        "t-11(44h前)": 0.0473,
+        "t-10(40h前)": 0.0513,
+        "t-9(36h前)": 0.0555,
+        "t-8(32h前)": 0.0599,
+        "t-7(28h前)": 0.0644,
+        "t-6(24h前)": 0.0689,
+        "t-5(20h前)": 0.0733,
+        "t-4(16h前)": 0.0776,
+        "t-3(12h前)": 0.0817,
+        "t-2(8h前)": 0.0855,
+        "t-1(4h前)": 0.0892
+      },
+      "best_epoch": 11,
+      "total_epochs": 31,
+      "train_time_sec": 110.9,
+      "train_period": "2022-01-01 ~ 2024-04-06",
+      "val_period": "2024-04-06 ~ 2024-09-06",
+      "test_period": "2024-09-06 ~ 2025-02-07",
+      "hyperparams": {
+        "lookback": 18,
+        "forecast": 6,
+        "hidden_size": 96,
+        "num_layers": 2,
+        "dropout": 0.2,
+        "lr": 0.001,
+        "weight_decay": 1e-05,
+        "patience": 20,
+        "loss_function": "SmoothL1Loss",
+        "input_features": [
+          "水温",
+          "pH",
+          "溶解氧",
+          "电导率",
+          "浊度",
+          "高锰酸盐指数",
+          "氨氮",
+          "总磷",
+          "总氮",
+          "hour_sin",
+          "hour_cos",
+          "dayofyear_sin",
+          "dayofyear_cos",
+          "DO_24h_mean",
+          "DO_24h_std",
+          "DO_diff",
+          "DO_72h_mean",
+          "temp_24h_mean",
+          "temp_diff"
+        ]
+      }
+    },
+    {
+      "id": "MR_月波",
+      "type": "ModelResult",
+      "model_type": "LSTM+Attention",
+      "station": "月波",
+      "rmse": 0.3092,
+      "mae": 0.2374,
+      "r2": 0.7857,
+      "mape": 2.55,
+      "step_metrics": [
+        {
+          "step": 1,
+          "hours_ahead": 4,
+          "MAE": 0.2153,
+          "RMSE": 0.2863,
+          "R2": 0.8191,
+          "MAPE": 2.31
+        },
+        {
+          "step": 2,
+          "hours_ahead": 8,
+          "MAE": 0.2296,
+          "RMSE": 0.3009,
+          "R2": 0.7989,
+          "MAPE": 2.46
+        },
+        {
+          "step": 3,
+          "hours_ahead": 12,
+          "MAE": 0.233,
+          "RMSE": 0.3076,
+          "R2": 0.7887,
+          "MAPE": 2.5
+        },
+        {
+          "step": 4,
+          "hours_ahead": 16,
+          "MAE": 0.2354,
+          "RMSE": 0.3074,
+          "R2": 0.7882,
+          "MAPE": 2.53
+        },
+        {
+          "step": 5,
+          "hours_ahead": 20,
+          "MAE": 0.2564,
+          "RMSE": 0.3276,
+          "R2": 0.7584,
+          "MAPE": 2.76
+        },
+        {
+          "step": 6,
+          "hours_ahead": 24,
+          "MAE": 0.2547,
+          "RMSE": 0.3252,
+          "R2": 0.7607,
+          "MAPE": 2.75
+        }
+      ],
+      "top_features": [
+        {
+          "name": "DO_diff",
+          "importance": 0.7478,
+          "explanation": "当前DO与上一个时间步的差值，捕捉DO的瞬时变化趋势（上升/下降）。"
+        },
+        {
+          "name": "总氮",
+          "importance": 0.684,
+          "explanation": "氮素过量加剧富营养化，间接通过生物过程影响DO浓度。"
+        },
+        {
+          "name": "氨氮",
+          "importance": -0.361,
+          "explanation": "氨氮硝化过程消耗大量溶解氧，是耗氧型污染的重要指示。"
+        },
+        {
+          "name": "高锰酸盐指数",
+          "importance": -0.2585,
+          "explanation": "反映水体有机污染程度，有机物好氧分解直接消耗溶解氧。"
+        },
+        {
+          "name": "电导率",
+          "importance": 0.167,
+          "explanation": "反映水体总离子浓度，间接指示排污或地质背景变化，与DO存在协变关系。"
+        }
+      ],
+      "attention_weights": {
+        "t-18(72h前)": 0.0213,
+        "t-17(68h前)": 0.0225,
+        "t-16(64h前)": 0.0245,
+        "t-15(60h前)": 0.0272,
+        "t-14(56h前)": 0.0306,
+        "t-13(52h前)": 0.0347,
+        "t-12(48h前)": 0.0394,
+        "t-11(44h前)": 0.0445,
+        "t-10(40h前)": 0.05,
+        "t-9(36h前)": 0.0558,
+        "t-8(32h前)": 0.0617,
+        "t-7(28h前)": 0.0677,
+        "t-6(24h前)": 0.0735,
+        "t-5(20h前)": 0.0792,
+        "t-4(16h前)": 0.0846,
+        "t-3(12h前)": 0.0897,
+        "t-2(8h前)": 0.0944,
+        "t-1(4h前)": 0.0987
+      },
+      "best_epoch": 4,
+      "total_epochs": 24,
+      "train_time_sec": 28.9,
+      "train_period": "2022-01-01 ~ 2024-04-01",
+      "val_period": "2024-04-01 ~ 2024-09-03",
+      "test_period": "2024-09-03 ~ 2025-02-07",
+      "hyperparams": {
+        "lookback": 18,
+        "forecast": 6,
+        "hidden_size": 96,
+        "num_layers": 2,
+        "dropout": 0.2,
+        "lr": 0.001,
+        "weight_decay": 1e-05,
+        "patience": 20,
+        "loss_function": "SmoothL1Loss",
+        "input_features": [
+          "水温",
+          "pH",
+          "溶解氧",
+          "电导率",
+          "浊度",
+          "高锰酸盐指数",
+          "氨氮",
+          "总磷",
+          "总氮",
+          "hour_sin",
+          "hour_cos",
+          "dayofyear_sin",
+          "dayofyear_cos",
+          "DO_24h_mean",
+          "DO_24h_std",
+          "DO_diff",
+          "DO_72h_mean",
+          "temp_24h_mean",
+          "temp_diff"
+        ]
+      }
+    },
+    {
+      "id": "MR_李码头",
+      "type": "ModelResult",
+      "model_type": "LSTM+Attention",
+      "station": "李码头",
+      "rmse": 0.4745,
+      "mae": 0.3392,
+      "r2": 0.8085,
+      "mape": 3.44,
+      "step_metrics": [
+        {
+          "step": 1,
+          "hours_ahead": 4,
+          "MAE": 0.324,
+          "RMSE": 0.4657,
+          "R2": 0.8158,
+          "MAPE": 3.28
+        },
+        {
+          "step": 2,
+          "hours_ahead": 8,
+          "MAE": 0.327,
+          "RMSE": 0.4734,
+          "R2": 0.8096,
+          "MAPE": 3.31
+        },
+        {
+          "step": 3,
+          "hours_ahead": 12,
+          "MAE": 0.3387,
+          "RMSE": 0.473,
+          "R2": 0.81,
+          "MAPE": 3.44
+        },
+        {
+          "step": 4,
+          "hours_ahead": 16,
+          "MAE": 0.3483,
+          "RMSE": 0.4714,
+          "R2": 0.8114,
+          "MAPE": 3.54
+        },
+        {
+          "step": 5,
+          "hours_ahead": 20,
+          "MAE": 0.3491,
+          "RMSE": 0.4794,
+          "R2": 0.8044,
+          "MAPE": 3.55
+        },
+        {
+          "step": 6,
+          "hours_ahead": 24,
+          "MAE": 0.3481,
+          "RMSE": 0.4843,
+          "R2": 0.7999,
+          "MAPE": 3.54
+        }
+      ],
+      "top_features": [
+        {
+          "name": "hour_cos",
+          "importance": 0.3703,
+          "explanation": "一天内的时间周期（余弦分量），与hour_sin配合编码24小时周期变化。"
+        },
+        {
+          "name": "hour_sin",
+          "importance": 0.3516,
+          "explanation": "一天内的时间周期（正弦分量），捕捉DO的昼夜节律——白天光合产氧，夜间呼吸耗氧。"
+        },
+        {
+          "name": "高锰酸盐指数",
+          "importance": 0.1112,
+          "explanation": "反映水体有机污染程度，有机物好氧分解直接消耗溶解氧。"
+        },
+        {
+          "name": "总磷",
+          "importance": 0.0802,
+          "explanation": "磷是富营养化限制因子，高磷促进藻类繁殖，影响DO的昼夜和季节波动。"
+        },
+        {
+          "name": "DO_diff",
+          "importance": 0.0457,
+          "explanation": "当前DO与上一个时间步的差值，捕捉DO的瞬时变化趋势（上升/下降）。"
+        }
+      ],
+      "attention_weights": {
+        "t-18(72h前)": 0.0336,
+        "t-17(68h前)": 0.0327,
+        "t-16(64h前)": 0.0316,
+        "t-15(60h前)": 0.032,
+        "t-14(56h前)": 0.0336,
+        "t-13(52h前)": 0.0356,
+        "t-12(48h前)": 0.0376,
+        "t-11(44h前)": 0.0402,
+        "t-10(40h前)": 0.0441,
+        "t-9(36h前)": 0.0496,
+        "t-8(32h前)": 0.0563,
+        "t-7(28h前)": 0.0628,
+        "t-6(24h前)": 0.0681,
+        "t-5(20h前)": 0.0728,
+        "t-4(16h前)": 0.0786,
+        "t-3(12h前)": 0.0865,
+        "t-2(8h前)": 0.0968,
+        "t-1(4h前)": 0.1074
+      },
+      "best_epoch": 22,
+      "total_epochs": 42,
+      "train_time_sec": 92.7,
+      "train_period": "2022-01-01 ~ 2024-03-19",
+      "val_period": "2024-03-19 ~ 2024-09-02",
+      "test_period": "2024-09-02 ~ 2025-02-07",
+      "hyperparams": {
+        "lookback": 18,
+        "forecast": 6,
+        "hidden_size": 96,
+        "num_layers": 2,
+        "dropout": 0.2,
+        "lr": 0.001,
+        "weight_decay": 1e-05,
+        "patience": 20,
+        "loss_function": "SmoothL1Loss",
+        "input_features": [
+          "水温",
+          "pH",
+          "溶解氧",
+          "电导率",
+          "浊度",
+          "高锰酸盐指数",
+          "氨氮",
+          "总磷",
+          "总氮",
+          "hour_sin",
+          "hour_cos",
+          "dayofyear_sin",
+          "dayofyear_cos",
+          "DO_24h_mean",
+          "DO_24h_std",
+          "DO_diff",
+          "DO_72h_mean",
+          "temp_24h_mean",
+          "temp_diff"
+        ]
+      }
+    },
+    {
+      "id": "MR_姜公堰",
+      "type": "ModelResult",
+      "model_type": "LSTM+Attention",
+      "station": "姜公堰",
+      "rmse": 0.92,
+      "mae": 0.7184,
+      "r2": 0.8085,
+      "mape": 7.72,
+      "step_metrics": [
+        {
+          "step": 1,
+          "hours_ahead": 4,
+          "MAE": 0.6289,
+          "RMSE": 0.8072,
+          "R2": 0.8534,
+          "MAPE": 6.89
+        },
+        {
+          "step": 2,
+          "hours_ahead": 8,
+          "MAE": 0.6735,
+          "RMSE": 0.8626,
+          "R2": 0.8327,
+          "MAPE": 7.35
+        },
+        {
+          "step": 3,
+          "hours_ahead": 12,
+          "MAE": 0.7225,
+          "RMSE": 0.9231,
+          "R2": 0.8083,
+          "MAPE": 7.81
+        },
+        {
+          "step": 4,
+          "hours_ahead": 16,
+          "MAE": 0.7591,
+          "RMSE": 0.9731,
+          "R2": 0.7868,
+          "MAPE": 8.07
+        },
+        {
+          "step": 5,
+          "hours_ahead": 20,
+          "MAE": 0.7783,
+          "RMSE": 0.9939,
+          "R2": 0.7773,
+          "MAPE": 8.22
+        },
+        {
+          "step": 6,
+          "hours_ahead": 24,
+          "MAE": 0.7483,
+          "RMSE": 0.9598,
+          "R2": 0.7924,
+          "MAPE": 7.97
+        }
+      ],
+      "top_features": [
+        {
+          "name": "溶解氧",
+          "importance": 0.3165,
+          "explanation": "DO自身具有强时序自相关性，历史DO值是预测未来趋势的重要基准。"
+        },
+        {
+          "name": "DO_diff",
+          "importance": 0.2206,
+          "explanation": "当前DO与上一个时间步的差值，捕捉DO的瞬时变化趋势（上升/下降）。"
+        },
+        {
+          "name": "hour_sin",
+          "importance": 0.1426,
+          "explanation": "一天内的时间周期（正弦分量），捕捉DO的昼夜节律——白天光合产氧，夜间呼吸耗氧。"
+        },
+        {
+          "name": "水温",
+          "importance": 0.1223,
+          "explanation": "水温升高导致溶解氧饱和浓度下降，是DO最直接的物理驱动因素。夏季高温期常出现DO低谷。"
+        },
+        {
+          "name": "总氮",
+          "importance": 0.0935,
+          "explanation": "氮素过量加剧富营养化，间接通过生物过程影响DO浓度。"
+        }
+      ],
+      "attention_weights": {
+        "t-18(72h前)": 0.0206,
+        "t-17(68h前)": 0.0194,
+        "t-16(64h前)": 0.0189,
+        "t-15(60h前)": 0.0193,
+        "t-14(56h前)": 0.0204,
+        "t-13(52h前)": 0.0224,
+        "t-12(48h前)": 0.0252,
+        "t-11(44h前)": 0.0288,
+        "t-10(40h前)": 0.0333,
+        "t-9(36h前)": 0.0389,
+        "t-8(32h前)": 0.0461,
+        "t-7(28h前)": 0.0551,
+        "t-6(24h前)": 0.0659,
+        "t-5(20h前)": 0.0786,
+        "t-4(16h前)": 0.0938,
+        "t-3(12h前)": 0.1125,
+        "t-2(8h前)": 0.1359,
+        "t-1(4h前)": 0.165
+      },
+      "best_epoch": 16,
+      "total_epochs": 36,
+      "train_time_sec": 172.1,
+      "train_period": "2022-01-01 ~ 2024-04-01",
+      "val_period": "2024-04-01 ~ 2024-09-02",
+      "test_period": "2024-09-02 ~ 2025-02-07",
+      "hyperparams": {
+        "lookback": 18,
+        "forecast": 6,
+        "hidden_size": 96,
+        "num_layers": 2,
+        "dropout": 0.2,
+        "lr": 0.001,
+        "weight_decay": 1e-05,
+        "patience": 20,
+        "loss_function": "SmoothL1Loss",
+        "input_features": [
+          "水温",
+          "pH",
+          "溶解氧",
+          "电导率",
+          "浊度",
+          "高锰酸盐指数",
+          "氨氮",
+          "总磷",
+          "总氮",
+          "hour_sin",
+          "hour_cos",
+          "dayofyear_sin",
+          "dayofyear_cos",
+          "DO_24h_mean",
+          "DO_24h_std",
+          "DO_diff",
+          "DO_72h_mean",
+          "temp_24h_mean",
+          "temp_diff"
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "R_大渡河",
+      "target": "R_岷江干流",
+      "relation": "tributary_of"
+    },
+    {
+      "source": "R_青衣江",
+      "target": "R_岷江干流",
+      "relation": "tributary_of"
+    },
+    {
+      "source": "R_府河",
+      "target": "R_岷江干流",
+      "relation": "tributary_of"
+    },
+    {
+      "source": "R_江安河",
+      "target": "R_岷江干流",
+      "relation": "tributary_of"
+    },
+    {
+      "source": "R_马边河",
+      "target": "R_岷江干流",
+      "relation": "tributary_of"
+    },
+    {
+      "source": "R_越溪河",
+      "target": "R_岷江干流",
+      "relation": "tributary_of"
+    },
+    {
+      "source": "P_溶解氧",
+      "target": "MR_渭门桥",
+      "relation": "predicted_by"
+    },
+    {
+      "source": "P_溶解氧",
+      "target": "MR_都江堰水文站",
+      "relation": "predicted_by"
+    },
+    {
+      "source": "P_溶解氧",
+      "target": "MR_岳店子下",
+      "relation": "predicted_by"
+    },
+    {
+      "source": "P_溶解氧",
+      "target": "MR_悦来渡口",
+      "relation": "predicted_by"
+    },
+    {
+      "source": "P_溶解氧",
+      "target": "MR_月波",
+      "relation": "predicted_by"
+    },
+    {
+      "source": "P_溶解氧",
+      "target": "MR_李码头",
+      "relation": "predicted_by"
+    },
+    {
+      "source": "P_溶解氧",
+      "target": "MR_姜公堰",
+      "relation": "predicted_by"
+    },
+    {
+      "source": "S_渭门桥",
+      "target": "R_岷江干流",
+      "relation": "located_at"
+    },
+    {
+      "source": "S_渭门桥",
+      "target": "C_阿坝藏族羌族自治州",
+      "relation": "belongs_to"
+    },
+    {
+      "source": "S_渭门桥",
+      "target": "DS_国家地表水",
+      "relation": "sourced_from"
+    },
+    {
+      "source": "S_渭门桥",
+      "target": "WQ_I",
+      "relation": "classified_as"
+    },
+    {
+      "source": "S_渭门桥",
+      "target": "P_溶解氧",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_渭门桥",
+      "target": "P_水温",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_渭门桥",
+      "target": "P_pH",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_渭门桥",
+      "target": "P_电导率",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_渭门桥",
+      "target": "P_浊度",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_渭门桥",
+      "target": "P_高锰酸盐指数",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_渭门桥",
+      "target": "P_氨氮",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_渭门桥",
+      "target": "P_总磷",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_渭门桥",
+      "target": "P_总氮",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_渭门桥",
+      "target": "S_都江堰水文站",
+      "relation": "upstream_of"
+    },
+    {
+      "source": "S_都江堰水文站",
+      "target": "R_岷江干流",
+      "relation": "located_at"
+    },
+    {
+      "source": "S_都江堰水文站",
+      "target": "C_成都市",
+      "relation": "belongs_to"
+    },
+    {
+      "source": "S_都江堰水文站",
+      "target": "DS_国家地表水",
+      "relation": "sourced_from"
+    },
+    {
+      "source": "S_都江堰水文站",
+      "target": "WQ_I",
+      "relation": "classified_as"
+    },
+    {
+      "source": "S_都江堰水文站",
+      "target": "P_溶解氧",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_都江堰水文站",
+      "target": "P_水温",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_都江堰水文站",
+      "target": "P_pH",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_都江堰水文站",
+      "target": "P_电导率",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_都江堰水文站",
+      "target": "P_浊度",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_都江堰水文站",
+      "target": "P_高锰酸盐指数",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_都江堰水文站",
+      "target": "P_氨氮",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_都江堰水文站",
+      "target": "P_总磷",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_都江堰水文站",
+      "target": "P_总氮",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_都江堰水文站",
+      "target": "S_岳店子下",
+      "relation": "upstream_of"
+    },
+    {
+      "source": "S_岳店子下",
+      "target": "R_岷江干流",
+      "relation": "located_at"
+    },
+    {
+      "source": "S_岳店子下",
+      "target": "C_成都市",
+      "relation": "belongs_to"
+    },
+    {
+      "source": "S_岳店子下",
+      "target": "DS_国家地表水",
+      "relation": "sourced_from"
+    },
+    {
+      "source": "S_岳店子下",
+      "target": "WQ_III",
+      "relation": "classified_as"
+    },
+    {
+      "source": "S_岳店子下",
+      "target": "P_溶解氧",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_岳店子下",
+      "target": "P_水温",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_岳店子下",
+      "target": "P_pH",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_岳店子下",
+      "target": "P_电导率",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_岳店子下",
+      "target": "P_浊度",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_岳店子下",
+      "target": "P_高锰酸盐指数",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_岳店子下",
+      "target": "P_氨氮",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_岳店子下",
+      "target": "P_总磷",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_岳店子下",
+      "target": "P_总氮",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_岳店子下",
+      "target": "S_悦来渡口",
+      "relation": "upstream_of"
+    },
+    {
+      "source": "S_悦来渡口",
+      "target": "R_岷江干流",
+      "relation": "located_at"
+    },
+    {
+      "source": "S_悦来渡口",
+      "target": "C_乐山市",
+      "relation": "belongs_to"
+    },
+    {
+      "source": "S_悦来渡口",
+      "target": "DS_国家地表水",
+      "relation": "sourced_from"
+    },
+    {
+      "source": "S_悦来渡口",
+      "target": "WQ_II",
+      "relation": "classified_as"
+    },
+    {
+      "source": "S_悦来渡口",
+      "target": "P_溶解氧",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_悦来渡口",
+      "target": "P_水温",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_悦来渡口",
+      "target": "P_pH",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_悦来渡口",
+      "target": "P_电导率",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_悦来渡口",
+      "target": "P_浊度",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_悦来渡口",
+      "target": "P_高锰酸盐指数",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_悦来渡口",
+      "target": "P_氨氮",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_悦来渡口",
+      "target": "P_总磷",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_悦来渡口",
+      "target": "P_总氮",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_悦来渡口",
+      "target": "S_月波",
+      "relation": "upstream_of"
+    },
+    {
+      "source": "S_月波",
+      "target": "R_岷江干流",
+      "relation": "located_at"
+    },
+    {
+      "source": "S_月波",
+      "target": "C_宜宾市",
+      "relation": "belongs_to"
+    },
+    {
+      "source": "S_月波",
+      "target": "DS_国家地表水",
+      "relation": "sourced_from"
+    },
+    {
+      "source": "S_月波",
+      "target": "WQ_II",
+      "relation": "classified_as"
+    },
+    {
+      "source": "S_月波",
+      "target": "P_溶解氧",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_月波",
+      "target": "P_水温",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_月波",
+      "target": "P_pH",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_月波",
+      "target": "P_电导率",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_月波",
+      "target": "P_浊度",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_月波",
+      "target": "P_高锰酸盐指数",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_月波",
+      "target": "P_氨氮",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_月波",
+      "target": "P_总磷",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_月波",
+      "target": "P_总氮",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_李码头",
+      "target": "R_大渡河",
+      "relation": "located_at"
+    },
+    {
+      "source": "S_李码头",
+      "target": "C_乐山市",
+      "relation": "belongs_to"
+    },
+    {
+      "source": "S_李码头",
+      "target": "DS_国家地表水",
+      "relation": "sourced_from"
+    },
+    {
+      "source": "S_李码头",
+      "target": "WQ_II",
+      "relation": "classified_as"
+    },
+    {
+      "source": "S_李码头",
+      "target": "P_溶解氧",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_李码头",
+      "target": "P_水温",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_李码头",
+      "target": "P_pH",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_李码头",
+      "target": "P_电导率",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_李码头",
+      "target": "P_浊度",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_李码头",
+      "target": "P_高锰酸盐指数",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_李码头",
+      "target": "P_氨氮",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_李码头",
+      "target": "P_总磷",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_李码头",
+      "target": "P_总氮",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_李码头",
+      "target": "S_悦来渡口",
+      "relation": "flows_into",
+      "description": "李码头所在支流汇入岷江干流(悦来渡口)"
+    },
+    {
+      "source": "S_姜公堰",
+      "target": "R_青衣江",
+      "relation": "located_at"
+    },
+    {
+      "source": "S_姜公堰",
+      "target": "C_乐山市",
+      "relation": "belongs_to"
+    },
+    {
+      "source": "S_姜公堰",
+      "target": "DS_国家地表水",
+      "relation": "sourced_from"
+    },
+    {
+      "source": "S_姜公堰",
+      "target": "WQ_II",
+      "relation": "classified_as"
+    },
+    {
+      "source": "S_姜公堰",
+      "target": "P_溶解氧",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_姜公堰",
+      "target": "P_水温",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_姜公堰",
+      "target": "P_pH",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_姜公堰",
+      "target": "P_电导率",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_姜公堰",
+      "target": "P_浊度",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_姜公堰",
+      "target": "P_高锰酸盐指数",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_姜公堰",
+      "target": "P_氨氮",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_姜公堰",
+      "target": "P_总磷",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_姜公堰",
+      "target": "P_总氮",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_姜公堰",
+      "target": "S_悦来渡口",
+      "relation": "flows_into",
+      "description": "姜公堰所在支流汇入岷江干流(悦来渡口)"
+    },
+    {
+      "source": "S_大岗山",
+      "target": "R_大渡河",
+      "relation": "located_at"
+    },
+    {
+      "source": "S_大岗山",
+      "target": "C_雅安市",
+      "relation": "belongs_to"
+    },
+    {
+      "source": "S_大岗山",
+      "target": "DS_国家地表水",
+      "relation": "sourced_from"
+    },
+    {
+      "source": "S_大岗山",
+      "target": "WQ_I",
+      "relation": "classified_as"
+    },
+    {
+      "source": "S_大岗山",
+      "target": "P_溶解氧",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_大岗山",
+      "target": "P_水温",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_大岗山",
+      "target": "P_pH",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_大岗山",
+      "target": "P_电导率",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_大岗山",
+      "target": "P_浊度",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_大岗山",
+      "target": "P_高锰酸盐指数",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_大岗山",
+      "target": "P_氨氮",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_大岗山",
+      "target": "P_总磷",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_大岗山",
+      "target": "P_总氮",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_大岗山",
+      "target": "S_三谷庄",
+      "relation": "upstream_of"
+    },
+    {
+      "source": "S_三谷庄",
+      "target": "R_大渡河",
+      "relation": "located_at"
+    },
+    {
+      "source": "S_三谷庄",
+      "target": "C_雅安市",
+      "relation": "belongs_to"
+    },
+    {
+      "source": "S_三谷庄",
+      "target": "DS_国家地表水",
+      "relation": "sourced_from"
+    },
+    {
+      "source": "S_三谷庄",
+      "target": "WQ_I",
+      "relation": "classified_as"
+    },
+    {
+      "source": "S_三谷庄",
+      "target": "P_溶解氧",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_三谷庄",
+      "target": "P_水温",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_三谷庄",
+      "target": "P_pH",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_三谷庄",
+      "target": "P_电导率",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_三谷庄",
+      "target": "P_浊度",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_三谷庄",
+      "target": "P_高锰酸盐指数",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_三谷庄",
+      "target": "P_氨氮",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_三谷庄",
+      "target": "P_总磷",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_三谷庄",
+      "target": "P_总氮",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_三谷庄",
+      "target": "S_李码头",
+      "relation": "upstream_of"
+    },
+    {
+      "source": "S_木城镇",
+      "target": "R_青衣江",
+      "relation": "located_at"
+    },
+    {
+      "source": "S_木城镇",
+      "target": "C_乐山市",
+      "relation": "belongs_to"
+    },
+    {
+      "source": "S_木城镇",
+      "target": "DS_国家地表水",
+      "relation": "sourced_from"
+    },
+    {
+      "source": "S_木城镇",
+      "target": "WQ_II",
+      "relation": "classified_as"
+    },
+    {
+      "source": "S_木城镇",
+      "target": "P_溶解氧",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_木城镇",
+      "target": "P_水温",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_木城镇",
+      "target": "P_pH",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_木城镇",
+      "target": "P_电导率",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_木城镇",
+      "target": "P_浊度",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_木城镇",
+      "target": "P_高锰酸盐指数",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_木城镇",
+      "target": "P_氨氮",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_木城镇",
+      "target": "P_总磷",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_木城镇",
+      "target": "P_总氮",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_木城镇",
+      "target": "S_龟都府",
+      "relation": "upstream_of"
+    },
+    {
+      "source": "S_龟都府",
+      "target": "R_青衣江",
+      "relation": "located_at"
+    },
+    {
+      "source": "S_龟都府",
+      "target": "C_雅安市",
+      "relation": "belongs_to"
+    },
+    {
+      "source": "S_龟都府",
+      "target": "DS_国家地表水",
+      "relation": "sourced_from"
+    },
+    {
+      "source": "S_龟都府",
+      "target": "WQ_II",
+      "relation": "classified_as"
+    },
+    {
+      "source": "S_龟都府",
+      "target": "P_溶解氧",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_龟都府",
+      "target": "P_水温",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_龟都府",
+      "target": "P_pH",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_龟都府",
+      "target": "P_电导率",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_龟都府",
+      "target": "P_浊度",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_龟都府",
+      "target": "P_高锰酸盐指数",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_龟都府",
+      "target": "P_氨氮",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_龟都府",
+      "target": "P_总磷",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_龟都府",
+      "target": "P_总氮",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_龟都府",
+      "target": "S_姜公堰",
+      "relation": "upstream_of"
+    },
+    {
+      "source": "S_黄龙溪",
+      "target": "R_府河",
+      "relation": "located_at"
+    },
+    {
+      "source": "S_黄龙溪",
+      "target": "C_成都市",
+      "relation": "belongs_to"
+    },
+    {
+      "source": "S_黄龙溪",
+      "target": "DS_国家地表水",
+      "relation": "sourced_from"
+    },
+    {
+      "source": "S_黄龙溪",
+      "target": "WQ_II",
+      "relation": "classified_as"
+    },
+    {
+      "source": "S_黄龙溪",
+      "target": "P_溶解氧",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_黄龙溪",
+      "target": "P_水温",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_黄龙溪",
+      "target": "P_pH",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_黄龙溪",
+      "target": "P_电导率",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_黄龙溪",
+      "target": "P_浊度",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_黄龙溪",
+      "target": "P_高锰酸盐指数",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_黄龙溪",
+      "target": "P_氨氮",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_黄龙溪",
+      "target": "P_总磷",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_黄龙溪",
+      "target": "P_总氮",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_黄龙溪",
+      "target": "S_岳店子下",
+      "relation": "flows_into",
+      "description": "黄龙溪所在支流汇入岷江干流(岳店子下)"
+    },
+    {
+      "source": "S_二江寺",
+      "target": "R_江安河",
+      "relation": "located_at"
+    },
+    {
+      "source": "S_二江寺",
+      "target": "C_成都市",
+      "relation": "belongs_to"
+    },
+    {
+      "source": "S_二江寺",
+      "target": "DS_国家地表水",
+      "relation": "sourced_from"
+    },
+    {
+      "source": "S_二江寺",
+      "target": "WQ_II",
+      "relation": "classified_as"
+    },
+    {
+      "source": "S_二江寺",
+      "target": "P_溶解氧",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_二江寺",
+      "target": "P_水温",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_二江寺",
+      "target": "P_pH",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_二江寺",
+      "target": "P_电导率",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_二江寺",
+      "target": "P_浊度",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_二江寺",
+      "target": "P_高锰酸盐指数",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_二江寺",
+      "target": "P_氨氮",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_二江寺",
+      "target": "P_总磷",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_二江寺",
+      "target": "P_总氮",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_二江寺",
+      "target": "S_岳店子下",
+      "relation": "flows_into",
+      "description": "二江寺所在支流汇入岷江干流(岳店子下)"
+    },
+    {
+      "source": "S_马边河河口",
+      "target": "R_马边河",
+      "relation": "located_at"
+    },
+    {
+      "source": "S_马边河河口",
+      "target": "C_乐山市",
+      "relation": "belongs_to"
+    },
+    {
+      "source": "S_马边河河口",
+      "target": "DS_国家地表水",
+      "relation": "sourced_from"
+    },
+    {
+      "source": "S_马边河河口",
+      "target": "WQ_II",
+      "relation": "classified_as"
+    },
+    {
+      "source": "S_马边河河口",
+      "target": "P_溶解氧",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_马边河河口",
+      "target": "P_水温",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_马边河河口",
+      "target": "P_pH",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_马边河河口",
+      "target": "P_电导率",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_马边河河口",
+      "target": "P_浊度",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_马边河河口",
+      "target": "P_高锰酸盐指数",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_马边河河口",
+      "target": "P_氨氮",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_马边河河口",
+      "target": "P_总磷",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_马边河河口",
+      "target": "P_总氮",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_马边河河口",
+      "target": "S_悦来渡口",
+      "relation": "flows_into",
+      "description": "马边河河口所在支流汇入岷江干流(悦来渡口)"
+    },
+    {
+      "source": "S_越溪河两河口",
+      "target": "R_越溪河",
+      "relation": "located_at"
+    },
+    {
+      "source": "S_越溪河两河口",
+      "target": "C_自贡市",
+      "relation": "belongs_to"
+    },
+    {
+      "source": "S_越溪河两河口",
+      "target": "DS_国家地表水",
+      "relation": "sourced_from"
+    },
+    {
+      "source": "S_越溪河两河口",
+      "target": "WQ_II",
+      "relation": "classified_as"
+    },
+    {
+      "source": "S_越溪河两河口",
+      "target": "P_溶解氧",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_越溪河两河口",
+      "target": "P_水温",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_越溪河两河口",
+      "target": "P_pH",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_越溪河两河口",
+      "target": "P_电导率",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_越溪河两河口",
+      "target": "P_浊度",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_越溪河两河口",
+      "target": "P_高锰酸盐指数",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_越溪河两河口",
+      "target": "P_氨氮",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_越溪河两河口",
+      "target": "P_总磷",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_越溪河两河口",
+      "target": "P_总氮",
+      "relation": "monitors"
+    },
+    {
+      "source": "S_越溪河两河口",
+      "target": "S_月波",
+      "relation": "flows_into",
+      "description": "越溪河两河口所在支流汇入岷江干流(月波)"
+    },
+    {
+      "source": "MR_渭门桥",
+      "target": "S_渭门桥",
+      "relation": "model_for"
+    },
+    {
+      "source": "MR_渭门桥",
+      "target": "P_电导率",
+      "relation": "driven_by",
+      "importance": 0.1766
+    },
+    {
+      "source": "MR_渭门桥",
+      "target": "P_水温",
+      "relation": "driven_by",
+      "importance": -0.0708
+    },
+    {
+      "source": "MR_都江堰水文站",
+      "target": "S_都江堰水文站",
+      "relation": "model_for"
+    },
+    {
+      "source": "MR_都江堰水文站",
+      "target": "P_溶解氧",
+      "relation": "driven_by",
+      "importance": 0.3289
+    },
+    {
+      "source": "MR_都江堰水文站",
+      "target": "P_高锰酸盐指数",
+      "relation": "driven_by",
+      "importance": 0.0558
+    },
+    {
+      "source": "MR_岳店子下",
+      "target": "S_岳店子下",
+      "relation": "model_for"
+    },
+    {
+      "source": "MR_岳店子下",
+      "target": "P_氨氮",
+      "relation": "driven_by",
+      "importance": 0.0193
+    },
+    {
+      "source": "MR_悦来渡口",
+      "target": "S_悦来渡口",
+      "relation": "model_for"
+    },
+    {
+      "source": "MR_悦来渡口",
+      "target": "P_浊度",
+      "relation": "driven_by",
+      "importance": 0.3337
+    },
+    {
+      "source": "MR_悦来渡口",
+      "target": "P_氨氮",
+      "relation": "driven_by",
+      "importance": 0.1327
+    },
+    {
+      "source": "MR_悦来渡口",
+      "target": "P_总氮",
+      "relation": "driven_by",
+      "importance": 0.1326
+    },
+    {
+      "source": "MR_月波",
+      "target": "S_月波",
+      "relation": "model_for"
+    },
+    {
+      "source": "MR_月波",
+      "target": "P_总氮",
+      "relation": "driven_by",
+      "importance": 0.684
+    },
+    {
+      "source": "MR_月波",
+      "target": "P_氨氮",
+      "relation": "driven_by",
+      "importance": -0.361
+    },
+    {
+      "source": "MR_月波",
+      "target": "P_高锰酸盐指数",
+      "relation": "driven_by",
+      "importance": -0.2585
+    },
+    {
+      "source": "MR_月波",
+      "target": "P_电导率",
+      "relation": "driven_by",
+      "importance": 0.167
+    },
+    {
+      "source": "MR_李码头",
+      "target": "S_李码头",
+      "relation": "model_for"
+    },
+    {
+      "source": "MR_李码头",
+      "target": "P_高锰酸盐指数",
+      "relation": "driven_by",
+      "importance": 0.1112
+    },
+    {
+      "source": "MR_李码头",
+      "target": "P_总磷",
+      "relation": "driven_by",
+      "importance": 0.0802
+    },
+    {
+      "source": "MR_姜公堰",
+      "target": "S_姜公堰",
+      "relation": "model_for"
+    },
+    {
+      "source": "MR_姜公堰",
+      "target": "P_溶解氧",
+      "relation": "driven_by",
+      "importance": 0.3165
+    },
+    {
+      "source": "MR_姜公堰",
+      "target": "P_水温",
+      "relation": "driven_by",
+      "importance": 0.1223
+    },
+    {
+      "source": "MR_姜公堰",
+      "target": "P_总氮",
+      "relation": "driven_by",
+      "importance": 0.0935
+    }
+  ],
+  "feature_explanations": {
+    "水温": "水温升高导致溶解氧饱和浓度下降，是DO最直接的物理驱动因素。夏季高温期常出现DO低谷。",
+    "pH": "pH影响水体中碳酸平衡和生物活性。偏碱性条件下藻类光合作用旺盛，可短期提升DO。",
+    "电导率": "反映水体总离子浓度，间接指示排污或地质背景变化，与DO存在协变关系。",
+    "浊度": "高浊度减弱光照穿透，抑制藻类光合产氧，同时悬浮有机物分解消耗DO。",
+    "高锰酸盐指数": "反映水体有机污染程度，有机物好氧分解直接消耗溶解氧。",
+    "氨氮": "氨氮硝化过程消耗大量溶解氧，是耗氧型污染的重要指示。",
+    "总磷": "磷是富营养化限制因子，高磷促进藻类繁殖，影响DO的昼夜和季节波动。",
+    "总氮": "氮素过量加剧富营养化，间接通过生物过程影响DO浓度。",
+    "溶解氧": "DO自身具有强时序自相关性，历史DO值是预测未来趋势的重要基准。",
+    "hour_sin": "一天内的时间周期（正弦分量），捕捉DO的昼夜节律——白天光合产氧，夜间呼吸耗氧。",
+    "hour_cos": "一天内的时间周期（余弦分量），与hour_sin配合编码24小时周期变化。",
+    "dayofyear_sin": "一年内的季节周期（正弦分量），捕捉DO的季节性变化——冬高夏低。",
+    "dayofyear_cos": "一年内的季节周期（余弦分量），与dayofyear_sin配合编码365天周期。",
+    "DO_24h_mean": "过去24小时DO平均值，反映近期DO整体水平，帮助模型识别稳态趋势。",
+    "DO_24h_std": "过去24小时DO标准差，衡量近期DO波动幅度，高波动通常预示水质变化。",
+    "DO_diff": "当前DO与上一个时间步的差值，捕捉DO的瞬时变化趋势（上升/下降）。",
+    "DO_72h_mean": "过去72小时DO平均值，提供更长时间尺度的基线参考，平滑短期波动。",
+    "temp_24h_mean": "过去24小时水温平均值，反映近期温度水平对DO饱和浓度的影响。",
+    "temp_diff": "当前水温与上一个时间步的差值，捕捉温度的急剧变化对DO的冲击。"
+  },
+  "water_quality_standards": {
+    "I": {
+      "level": 1,
+      "do_threshold": 7.5,
+      "description": "适用于源头水、国家自然保护区"
+    },
+    "II": {
+      "level": 2,
+      "do_threshold": 6.0,
+      "description": "适用于集中式饮用水源地一级保护区等"
+    },
+    "III": {
+      "level": 3,
+      "do_threshold": 5.0,
+      "description": "适用于集中式饮用水源地二级保护区等"
+    },
+    "IV": {
+      "level": 4,
+      "do_threshold": 3.0,
+      "description": "适用于一般工业用水及人体非直接接触的娱乐用水"
+    },
+    "V": {
+      "level": 5,
+      "do_threshold": 2.0,
+      "description": "适用于农业用水及一般景观用水"
+    }
+  },
+  "river_topology": {
+    "岷江干流": [
+      "渭门桥",
+      "都江堰水文站",
+      "岳店子下",
+      "悦来渡口",
+      "月波"
+    ],
+    "大渡河": [
+      "大岗山",
+      "三谷庄",
+      "李码头"
+    ],
+    "青衣江": [
+      "木城镇",
+      "龟都府",
+      "姜公堰"
+    ],
+    "府河": [
+      "黄龙溪"
+    ],
+    "江安河": [
+      "二江寺"
+    ],
+    "马边河": [
+      "马边河河口"
+    ],
+    "越溪河": [
+      "越溪河两河口"
+    ]
+  },
+  "tributary_confluences": {
+    "李码头": "悦来渡口",
+    "姜公堰": "悦来渡口",
+    "黄龙溪": "岳店子下",
+    "二江寺": "岳店子下",
+    "马边河河口": "悦来渡口",
+    "越溪河两河口": "月波"
+  }
+}

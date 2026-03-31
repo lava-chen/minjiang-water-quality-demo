@@ -1,0 +1,107 @@
+{
+  "station": "李码头",
+  "split_info": {
+    "total_rows": 5899,
+    "train_rows": 4129,
+    "val_rows": 884,
+    "test_rows": 886,
+    "train_sequences": 4106,
+    "val_sequences": 879,
+    "test_sequences": 881,
+    "train_period": "2022-01-01 ~ 2024-03-19",
+    "val_period": "2024-03-19 ~ 2024-09-02",
+    "test_period": "2024-09-02 ~ 2025-02-07"
+  },
+  "best_epoch": 22,
+  "total_epochs": 42,
+  "train_time_sec": 92.7,
+  "best_val_loss": 0.117204,
+  "step_metrics": [
+    {
+      "step": 1,
+      "hours_ahead": 4,
+      "MAE": 0.324,
+      "RMSE": 0.4657,
+      "R2": 0.8158,
+      "MAPE": 3.28
+    },
+    {
+      "step": 2,
+      "hours_ahead": 8,
+      "MAE": 0.327,
+      "RMSE": 0.4734,
+      "R2": 0.8096,
+      "MAPE": 3.31
+    },
+    {
+      "step": 3,
+      "hours_ahead": 12,
+      "MAE": 0.3387,
+      "RMSE": 0.473,
+      "R2": 0.81,
+      "MAPE": 3.44
+    },
+    {
+      "step": 4,
+      "hours_ahead": 16,
+      "MAE": 0.3483,
+      "RMSE": 0.4714,
+      "R2": 0.8114,
+      "MAPE": 3.54
+    },
+    {
+      "step": 5,
+      "hours_ahead": 20,
+      "MAE": 0.3491,
+      "RMSE": 0.4794,
+      "R2": 0.8044,
+      "MAPE": 3.55
+    },
+    {
+      "step": 6,
+      "hours_ahead": 24,
+      "MAE": 0.3481,
+      "RMSE": 0.4843,
+      "R2": 0.7999,
+      "MAPE": 3.54
+    }
+  ],
+  "overall": {
+    "MAE": 0.3392,
+    "RMSE": 0.4745,
+    "R2": 0.8085,
+    "MAPE": 3.44
+  },
+  "hyperparams": {
+    "lookback": 18,
+    "forecast": 6,
+    "hidden_size": 96,
+    "num_layers": 2,
+    "dropout": 0.2,
+    "lr": 0.001,
+    "weight_decay": 1e-05,
+    "patience": 20,
+    "loss_function": "SmoothL1Loss",
+    "input_features": [
+      "水温",
+      "pH",
+      "溶解氧",
+      "电导率",
+      "浊度",
+      "高锰酸盐指数",
+      "氨氮",
+      "总磷",
+      "总氮",
+      "hour_sin",
+      "hour_cos",
+      "dayofyear_sin",
+      "dayofyear_cos",
+      "DO_24h_mean",
+      "DO_24h_std",
+      "DO_diff",
+      "DO_72h_mean",
+      "temp_24h_mean",
+      "temp_diff"
+    ]
+  }
+}

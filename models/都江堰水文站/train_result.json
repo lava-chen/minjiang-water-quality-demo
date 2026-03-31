@@ -1,0 +1,107 @@
+{
+  "station": "都江堰水文站",
+  "split_info": {
+    "total_rows": 6064,
+    "train_rows": 4244,
+    "val_rows": 909,
+    "test_rows": 911,
+    "train_sequences": 4221,
+    "val_sequences": 904,
+    "test_sequences": 906,
+    "train_period": "2022-01-01 ~ 2024-03-18",
+    "val_period": "2024-03-19 ~ 2024-08-23",
+    "test_period": "2024-08-23 ~ 2025-02-07"
+  },
+  "best_epoch": 8,
+  "total_epochs": 28,
+  "train_time_sec": 37.0,
+  "best_val_loss": 0.338978,
+  "step_metrics": [
+    {
+      "step": 1,
+      "hours_ahead": 4,
+      "MAE": 0.2684,
+      "RMSE": 0.6038,
+      "R2": 0.5311,
+      "MAPE": 3.01
+    },
+    {
+      "step": 2,
+      "hours_ahead": 8,
+      "MAE": 0.2776,
+      "RMSE": 0.6088,
+      "R2": 0.5196,
+      "MAPE": 3.11
+    },
+    {
+      "step": 3,
+      "hours_ahead": 12,
+      "MAE": 0.2719,
+      "RMSE": 0.6001,
+      "R2": 0.5295,
+      "MAPE": 3.03
+    },
+    {
+      "step": 4,
+      "hours_ahead": 16,
+      "MAE": 0.2732,
+      "RMSE": 0.5949,
+      "R2": 0.5377,
+      "MAPE": 3.05
+    },
+    {
+      "step": 5,
+      "hours_ahead": 20,
+      "MAE": 0.275,
+      "RMSE": 0.5889,
+      "R2": 0.5456,
+      "MAPE": 3.07
+    },
+    {
+      "step": 6,
+      "hours_ahead": 24,
+      "MAE": 0.2734,
+      "RMSE": 0.5797,
+      "R2": 0.5516,
+      "MAPE": 3.07
+    }
+  ],
+  "overall": {
+    "MAE": 0.2732,
+    "RMSE": 0.596,
+    "R2": 0.5359,
+    "MAPE": 3.06
+  },
+  "hyperparams": {
+    "lookback": 18,
+    "forecast": 6,
+    "hidden_size": 96,
+    "num_layers": 2,
+    "dropout": 0.2,
+    "lr": 0.001,
+    "weight_decay": 1e-05,
+    "patience": 20,
+    "loss_function": "SmoothL1Loss",
+    "input_features": [
+      "水温",
+      "pH",
+      "溶解氧",
+      "电导率",
+      "浊度",
+      "高锰酸盐指数",
+      "氨氮",
+      "总磷",
+      "总氮",
+      "hour_sin",
+      "hour_cos",
+      "dayofyear_sin",
+      "dayofyear_cos",
+      "DO_24h_mean",
+      "DO_24h_std",
+      "DO_diff",
+      "DO_72h_mean",
+      "temp_24h_mean",
+      "temp_diff"
+    ]
+  }
+}

@@ -1,0 +1,107 @@
+{
+  "station": "岳店子下",
+  "split_info": {
+    "total_rows": 5995,
+    "train_rows": 4196,
+    "val_rows": 899,
+    "test_rows": 900,
+    "train_sequences": 4173,
+    "val_sequences": 894,
+    "test_sequences": 895,
+    "train_period": "2022-01-01 ~ 2024-04-10",
+    "val_period": "2024-04-10 ~ 2024-09-07",
+    "test_period": "2024-09-07 ~ 2025-02-07"
+  },
+  "best_epoch": 18,
+  "total_epochs": 38,
+  "train_time_sec": 68.0,
+  "best_val_loss": 0.084228,
+  "step_metrics": [
+    {
+      "step": 1,
+      "hours_ahead": 4,
+      "MAE": 0.6184,
+      "RMSE": 0.8689,
+      "R2": 0.7526,
+      "MAPE": 6.24
+    },
+    {
+      "step": 2,
+      "hours_ahead": 8,
+      "MAE": 0.6231,
+      "RMSE": 0.8795,
+      "R2": 0.746,
+      "MAPE": 6.27
+    },
+    {
+      "step": 3,
+      "hours_ahead": 12,
+      "MAE": 0.6337,
+      "RMSE": 0.8954,
+      "R2": 0.7366,
+      "MAPE": 6.39
+    },
+    {
+      "step": 4,
+      "hours_ahead": 16,
+      "MAE": 0.6429,
+      "RMSE": 0.9024,
+      "R2": 0.7325,
+      "MAPE": 6.48
+    },
+    {
+      "step": 5,
+      "hours_ahead": 20,
+      "MAE": 0.6437,
+      "RMSE": 0.897,
+      "R2": 0.7358,
+      "MAPE": 6.44
+    },
+    {
+      "step": 6,
+      "hours_ahead": 24,
+      "MAE": 0.6659,
+      "RMSE": 0.9243,
+      "R2": 0.7197,
+      "MAPE": 6.68
+    }
+  ],
+  "overall": {
+    "MAE": 0.638,
+    "RMSE": 0.8946,
+    "R2": 0.7372,
+    "MAPE": 6.42
+  },
+  "hyperparams": {
+    "lookback": 18,
+    "forecast": 6,
+    "hidden_size": 96,
+    "num_layers": 2,
+    "dropout": 0.2,
+    "lr": 0.001,
+    "weight_decay": 1e-05,
+    "patience": 20,
+    "loss_function": "SmoothL1Loss",
+    "input_features": [
+      "水温",
+      "pH",
+      "溶解氧",
+      "电导率",
+      "浊度",
+      "高锰酸盐指数",
+      "氨氮",
+      "总磷",
+      "总氮",
+      "hour_sin",
+      "hour_cos",
+      "dayofyear_sin",
+      "dayofyear_cos",
+      "DO_24h_mean",
+      "DO_24h_std",
+      "DO_diff",
+      "DO_72h_mean",
+      "temp_24h_mean",
+      "temp_diff"
+    ]
+  }
+}

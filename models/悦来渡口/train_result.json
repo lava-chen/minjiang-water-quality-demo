@@ -1,0 +1,107 @@
+{
+  "station": "悦来渡口",
+  "split_info": {
+    "total_rows": 6041,
+    "train_rows": 4228,
+    "val_rows": 906,
+    "test_rows": 907,
+    "train_sequences": 4205,
+    "val_sequences": 901,
+    "test_sequences": 902,
+    "train_period": "2022-01-01 ~ 2024-04-06",
+    "val_period": "2024-04-06 ~ 2024-09-06",
+    "test_period": "2024-09-06 ~ 2025-02-07"
+  },
+  "best_epoch": 11,
+  "total_epochs": 31,
+  "train_time_sec": 110.9,
+  "best_val_loss": 0.06116,
+  "step_metrics": [
+    {
+      "step": 1,
+      "hours_ahead": 4,
+      "MAE": 0.2592,
+      "RMSE": 0.3781,
+      "R2": 0.8048,
+      "MAPE": 2.82
+    },
+    {
+      "step": 2,
+      "hours_ahead": 8,
+      "MAE": 0.2792,
+      "RMSE": 0.4008,
+      "R2": 0.78,
+      "MAPE": 3.04
+    },
+    {
+      "step": 3,
+      "hours_ahead": 12,
+      "MAE": 0.2895,
+      "RMSE": 0.4143,
+      "R2": 0.7645,
+      "MAPE": 3.16
+    },
+    {
+      "step": 4,
+      "hours_ahead": 16,
+      "MAE": 0.299,
+      "RMSE": 0.4244,
+      "R2": 0.7522,
+      "MAPE": 3.27
+    },
+    {
+      "step": 5,
+      "hours_ahead": 20,
+      "MAE": 0.2972,
+      "RMSE": 0.4231,
+      "R2": 0.7529,
+      "MAPE": 3.26
+    },
+    {
+      "step": 6,
+      "hours_ahead": 24,
+      "MAE": 0.3022,
+      "RMSE": 0.4282,
+      "R2": 0.7461,
+      "MAPE": 3.32
+    }
+  ],
+  "overall": {
+    "MAE": 0.2877,
+    "RMSE": 0.4115,
+    "R2": 0.7667,
+    "MAPE": 3.14
+  },
+  "hyperparams": {
+    "lookback": 18,
+    "forecast": 6,
+    "hidden_size": 96,
+    "num_layers": 2,
+    "dropout": 0.2,
+    "lr": 0.001,
+    "weight_decay": 1e-05,
+    "patience": 20,
+    "loss_function": "SmoothL1Loss",
+    "input_features": [
+      "水温",
+      "pH",
+      "溶解氧",
+      "电导率",
+      "浊度",
+      "高锰酸盐指数",
+      "氨氮",
+      "总磷",
+      "总氮",
+      "hour_sin",
+      "hour_cos",
+      "dayofyear_sin",
+      "dayofyear_cos",
+      "DO_24h_mean",
+      "DO_24h_std",
+      "DO_diff",
+      "DO_72h_mean",
+      "temp_24h_mean",
+      "temp_diff"
+    ]
+  }
+}

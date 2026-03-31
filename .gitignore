@@ -1,0 +1,69 @@
+# ============================================
+#  岷江水系水质监测系统 .gitignore
+#  避免上传大文件 / 敏感文件 / 临时文件
+# ============================================
+
+# ---------- Python 通用 ----------
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+
+# ---------- 虚拟环境 ----------
+venv/
+env/
+.venv/
+.env/
+
+# ---------- IDE ----------
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ---------- 系统文件 ----------
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# ---------- 模型文件（太大，不上传） ----------
+# .pt / .pth 模型权重通常几十~几百 MB
+models/**/model.pt
+models/**/*.pth
+
+# scaler 和 loss 曲线（可由训练重新生成）
+models/**/scaler.pkl
+models/**/loss_curves.npz
+
+# 推理结果（可按需上传；当前仓库保留用于直接演示）
+# models/forecasts.json
+
+# ---------- 大 CSV 数据文件 ----------
+# minjiang_4h.csv 可能很大，朋友需要你单独发给他们
+data/processed/minjiang_4h.csv
+
+# ---------- 旧项目遗留文件（不需要上传） ----------
+0_地图文件/
+申报书/
+知识图谱文献/
+选题/
+初步探索.pdf
+顺序结构流程图.pdf
+基于深度学习与知识图谱的长江支流水质预测与可解释性分析.pdf
+基于深度学习与知识图谱的长江支流水质预测与可解释性分析.pptx
+长江支流水质重建与知识图谱驱动解释(2).pptx
+
+# ---------- Streamlit 缓存 ----------
+.streamlit/
+
+# ---------- 临时文件 ----------
+*.tmp
+*.log
+agent-tools/
+transfer.py
+_check_data.py
