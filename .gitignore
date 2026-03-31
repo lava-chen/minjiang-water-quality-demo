@@ -67,3 +67,4 @@ data/processed/minjiang_4h.csv
 agent-tools/
 transfer.py
 _check_data.py
+figures/
