@@ -1,0 +1,81 @@
+﻿@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 199 100% 98%;
+  --foreground: 213 35% 18%;
+  --card: 0 0% 100%;
+  --card-foreground: 213 35% 18%;
+  --primary: 196 81% 32%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 197 48% 92%;
+  --secondary-foreground: 204 36% 24%;
+  --muted: 194 41% 93%;
+  --muted-foreground: 206 16% 41%;
+  --accent: 170 54% 45%;
+  --accent-foreground: 0 0% 100%;
+  --border: 198 39% 86%;
+  --input: 198 35% 88%;
+  --ring: 196 81% 32%;
+  --radius: 1rem;
+}
+
+* {
+  @apply border-border;
+}
+
+body {
+  @apply bg-background text-foreground antialiased;
+  background-image: radial-gradient(circle at 15% 10%, rgba(84, 184, 220, 0.25), transparent 34%),
+    radial-gradient(circle at 85% 0%, rgba(42, 133, 171, 0.2), transparent 28%),
+    linear-gradient(180deg, rgba(225, 245, 252, 0.8), rgba(239, 251, 254, 0.92));
+  min-height: 100vh;
+}
+
+.metric-tile {
+  @apply rounded-2xl border border-white/60 bg-white/80 shadow-sm backdrop-blur;
+}
+
+.station-marker {
+  width: 16px;
+  height: 16px;
+  border-radius: 9999px;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.18);
+}
+
+.station-marker.active {
+  width: 20px;
+  height: 20px;
+  border-width: 3px;
+  box-shadow: 0 0 0 2px rgba(14, 116, 144, 0.35);
+}
+
+.marker-I {
+  background: #10b981;
+}
+
+.marker-II {
+  background: #0ea5e9;
+}
+
+.marker-III {
+  background: #f59e0b;
+}
+
+.marker-IV {
+  background: #f97316;
+}
+
+.marker-V {
+  background: #ef4444;
+}
+
+.river-legend-line {
+  display: inline-block;
+  width: 20px;
+  height: 0;
+  border-top: 3px solid;
+  border-radius: 2px;
+}
